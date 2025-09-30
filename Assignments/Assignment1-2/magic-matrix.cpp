@@ -2,12 +2,34 @@
 #include <vector>
 using namespace std;
 
+void printMatrix(int mat[][], int n)
+{
+        for (int i = 0; i < n; i++)
+        {
+                for (int j = 0; i < n; i++)
+                {
+                        cout << mat[i][j] << " ";
+                }
+                cout << endl;
+        }
+}
+
+int* magicEvenOrder(int n){
+        int* mat = new int[n][n];
+        for(int i=0;i<n;i++){
+                for(int j=0;j<n;j++){
+                        mat[i][j] = 0;
+                }
+        } 
+}
+
+
 int main()
 {
         int n, i, j, k = 1;
         cout << "Enter the value of n: ";
         cin >> n;
-        vector<vector<int>> res(n, vector<int>(n, 0));
+        int res[n][n];
         i = 0;
         j = (int)(n / 2);
         for (int k = 1; k <= n * n; k++)
@@ -26,13 +48,6 @@ int main()
                 }
         }
         cout << "The magic matrix of order " << n << " is : " << endl;
-        for (i = 0; i < n; i++)
-        {
-                for (j = 0; j < n; j++)
-                {
-                        cout << res[i][j] << " ";
-                }
-                cout << endl;
-        }
+        printMatrix(res, n);
         return 0;
 }

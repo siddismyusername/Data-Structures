@@ -43,6 +43,20 @@ void insertLast(node** head, string name, long int PRN){
     temp->next = newNode;
 }
 
+node* insertLast(node* head,node* ele){
+    if(head==NULL){
+        head = ele;
+        return head;
+    }
+    node* temp = head;
+    while(temp->next!=NULL){
+        temp = temp->next;
+    }
+    temp->next = ele;
+    ele->next = NULL;
+    return head;
+}
+
 void insertFirst(node** head, string name, long int PRN){
     node* newNode = createNode(name, PRN);
     newNode->role = "president";
@@ -159,38 +173,19 @@ void concatinateLists(node** head1, node** head2){
     cout << "Lists concatenated successfully! The combined list is in List 1." << endl << endl;
 }
 
-void reverseList(node** head) {
-    // Cannot reverse a list with 0 or 1 members.
-    if (*head == NULL || (*head)->next == NULL) {
-        cout << "List is too short to reverse." << endl << endl;
-        return;
+node* reverseList(node* temp) {
+    node* rev = temp;
+    if(temp->next!=NULL){
+        rev = insertLast(reverseList(temp->next),temp);
     }
+    return rev;
+}
 
-    node *prev = NULL, *current = *head, *next = NULL;
-
-    // Standard algorithm to reverse a linked list's pointers.
-    while (current != NULL) {
-        next = current->next;
-        current->next = prev;
-        prev = current;
-        current = next;
+void printReverse(node* temp){
+    if(temp->next!=NULL){
+        printReverse(temp->next);
     }
-    *head = prev; // The last node is now the head.
-
-    // --- Re-assign roles after reversal ---
-    node* temp = *head;
-    temp->role = "president"; // The new head is the president.
-
-    // Traverse to the new end of the list.
-    while (temp->next != NULL) {
-        // All nodes between the head and tail are 'members'.
-        if(temp != *head) temp->role = "member";
-        temp = temp->next;
-    }
-    // The new tail is the secretary.
-    temp->role = "secretary";
-
-    cout << "List reversed successfully!" << endl << endl;
+    cout<<"Name : "<<temp->name<<", Role : "<<temp->role<<", PRN"<<temp->PRN<<endl;
 }
 
 void searchByPRN(node* head, long int prn) {
@@ -209,50 +204,49 @@ void searchByPRN(node* head, long int prn) {
         temp = temp->next;
         position++;
     }
-    // This line is reached only if the loop completes without finding the PRN.
-    cout << "❌ Member with PRN " << prn << " not found in the list." << endl << endl;
+    cout << "Member with PRN " << prn << " not found in the list." << endl << endl;
 }
 
 void sortByPRN(node** head) {
-    // Cannot sort a list with 0 or 1 members.
-    if (*head == NULL || (*head)->next == NULL) {
-        cout << "List is too short to sort." << endl << endl;
-        return;
-    }
+    // // Cannot sort a list with 0 or 1 members.
+    // if (*head == NULL || (*head)->next == NULL) {
+    //     cout << "List is too short to sort." << endl << endl;
+    //     return;
+    // }
 
-    node *i, *j;
-    long int tempPRN;
-    string tempName;
+    // node *i, *j;
+    // long int tempPRN;
+    // string tempName;
 
-    // Using bubble sort to swap data between nodes for simplicity.
-    for (i = *head; i->next != NULL; i = i->next) {
-        for (j = i->next; j != NULL; j = j->next) {
-            if (i->PRN > j->PRN) {
-                // Swap PRN
-                tempPRN = i->PRN;
-                i->PRN = j->PRN;
-                j->PRN = tempPRN;
-                // Swap Name
-                tempName = i->name;
-                i->name = j->name;
-                j->name = tempName;
-            }
-        }
-    }
+    // // Using bubble sort to swap data between nodes for simplicity.
+    // for (i = *head; i->next != NULL; i = i->next) {
+    //     for (j = i->next; j != NULL; j = j->next) {
+    //         if (i->PRN > j->PRN) {
+    //             // Swap PRN
+    //             tempPRN = i->PRN;
+    //             i->PRN = j->PRN;
+    //             j->PRN = tempPRN;
+    //             // Swap Name
+    //             tempName = i->name;
+    //             i->name = j->name;
+    //             j->name = tempName;
+    //         }
+    //     }
+    // }
     
-    // --- Re-assign roles after sorting ---
-    node* temp = *head;
-    temp->role = "president"; // The member with the lowest PRN is now president.
+    // // --- Re-assign roles after sorting ---
+    // node* temp = *head;
+    // temp->role = "president"; // The member with the lowest PRN is now president.
 
-    // Traverse to the end of the list.
-    while (temp->next != NULL) {
-        if(temp != *head) temp->role = "member";
-        temp = temp->next;
-    }
-    // The member with the highest PRN is now secretary.
-    temp->role = "secretary";
+    // // Traverse to the end of the list.
+    // while (temp->next != NULL) {
+    //     if(temp != *head) temp->role = "member";
+    //     temp = temp->next;
+    // }
+    // // The member with the highest PRN is now secretary.
+    // temp->role = "secretary";
 
-    cout << "List sorted successfully by PRN!" << endl << endl;
+    // cout << "List sorted successfully by PRN!" << endl << endl;
 }
 
 int main(){
@@ -260,11 +254,12 @@ int main(){
     node* head1 = NULL;
     node* head2 = NULL;
     node** currentList = &head1; 
+    // node* temp;
     
     string name;
     long int prn;
     
-    while(ch != 10){
+    while(ch != 99){
         cout << "------------------------------------------" << endl;
         cout << "Current working list: " << ((currentList == &head1) ? "List 1" : "List 2") << endl;
         cout << "Menu:" << endl;
@@ -274,10 +269,11 @@ int main(){
         cout << "4. Delete Secretary" << endl;
         cout << "5. Display all members" << endl;
         cout << "6. Count total members" << endl;
-        cout << "7. Switch to work on List 2" << endl;
-        cout << "8. Concatenate List 2 to List 1" << endl;
-        cout << "9. Switch between List 1 and List 2" << endl;
-        cout << "10. Exit" << endl;
+        cout << "7. Reverse list" << endl;
+        cout << "8. Print Reverse list" << endl;
+        cout << "9. Concatenate List 2 to List 1" << endl;
+        cout << "10. Switch between List 1 and List 2" << endl;
+        cout << "11. Exit" << endl;
         cout << "------------------------------------------" << endl;
         cout << "Enter your choice: ";
         cin >> ch;
@@ -311,14 +307,16 @@ int main(){
                 countMembers(*currentList);
                 break;
             case 7:
-                currentList = &head2;
-                cout << "Switched. Now working on List 2." << endl << endl;
+                head2 = reverseList(*currentList);
                 break;
             case 8:
+                printReverse(*currentList);
+                break;
+            case 9:
                 concatinateLists(&head1, &head2);
                 currentList = &head1; 
                 break;
-            case 9:
+            case 10:
                 if (currentList == &head1) {
                     currentList = &head2;
                     cout << "Switched. Now working on List 2." << endl << endl;
@@ -327,7 +325,8 @@ int main(){
                     cout << "Switched. Now working on List 1." << endl << endl;
                 }
                 break;
-            case 10:
+            case 11:
+                ch = 99;
                 cout << "Exiting program. Goodbye!" << endl;
                 break;
             default:
