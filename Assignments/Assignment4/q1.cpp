@@ -9,7 +9,7 @@ using namespace std;
 struct Node {
     bool flag;
     char ch;
-    Node* down;\
+    Node* down;
     
     Node* next;
 };
