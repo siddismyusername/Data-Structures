@@ -209,21 +209,39 @@ void bookAppointment(Appointment*& head) {
         return;
     }
     
-    // Check for conflicts with existing appointments
+    // Check for conflicts with existing BOOKED appointments and find exact match
     Appointment* current = head;
+    Appointment* exactMatch = nullptr;
+    
     while (current != nullptr) {
-        if (isTimeOverlap(current, startH, startM, endH, endM)) {
-            cout << "Error: Time slot conflicts with existing appointment (";
+        // Check for exact time match with available slot
+        if (!current->isBooked && 
+            current->startHour == startH && current->startMinute == startM &&
+            current->endHour == endH && current->endMinute == endM) {
+            exactMatch = current;
+        }
+        
+        // Check for conflicts with booked appointments
+        if (current->isBooked && isTimeOverlap(current, startH, startM, endH, endM)) {
+            cout << "Error: Time slot conflicts with booked appointment (";
             displayTime(current->startHour, current->startMinute);
             cout << " - ";
             displayTime(current->endHour, current->endMinute);
-            cout << ")!\n";
+            cout << " - " << current->clientName << ")!\n";
             return;
         }
         current = current->next;
     }
     
-    // Create and add new appointment
+    // If exact match found, book that slot
+    if (exactMatch != nullptr) {
+        exactMatch->isBooked = true;
+        exactMatch->clientName = clientName;
+        cout << "\nAppointment booked successfully for " << clientName << "!\n";
+        return;
+    }
+    
+    // Otherwise, create and add new appointment
     Appointment* newApt = new Appointment;
     newApt->startHour = startH;
     newApt->startMinute = startM;
